@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 
     # local app
 
-    #'QuizApp',
+    'QuizApp',
     'UserApp.apps.UserappConfig',
 
     # third party app

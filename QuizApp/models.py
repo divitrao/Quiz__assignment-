@@ -27,10 +27,10 @@ class Question(models.Model):
         ("one_word","one_word")
     ]
     questionID= models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    quizId = models.ManyToManyField(Quiz)
-    type = models.CharField(max_length=100,choices=question_type)
-    marks = models.IntegerField()
-    question = models.TextField()
+    quizId = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    type = models.CharField(max_length=30,choices=question_type)
+    marks = models.IntegerField(default=0)
+    question = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.question
@@ -53,8 +53,9 @@ class UserAnswer(models.Model):
     textAnswer = models.CharField(max_length=100, blank=True)
     remainingTime = models.DurationField(blank=True)
     correctAnswerID = models.ForeignKey(CorrectAnswer,on_delete=models.CASCADE)
-    currentScore = models.IntegerField(default=0)
+    currentScore = models.IntegerField(default=0) # doubtfull as per Rahul 
     examCompleted = models.BooleanField(default=False)
+
     def __str__(self):
         return self.text_ans
    
