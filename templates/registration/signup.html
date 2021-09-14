@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% load crispy_forms_tags %}
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOG IN</title>
+</head>
+<body>
+    <div class="container w-50">
+    <h2 class="text-center">Sign up</h2>
+    <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="text-center">
+    <button class="btn btn-primary text-center" type="submit">Create Account </button>
+</div>
+    </form>
+    </div>
+</body>
+</html>
