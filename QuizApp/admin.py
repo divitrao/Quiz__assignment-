@@ -10,6 +10,8 @@ class QuestionAdmin(admin.ModelAdmin):
     inlines = [OptionInline,]
     list_display = ['quizId', 'type', 'marks', 'question'] 
 
+
+
 myModel = [Quiz,UserAnswer]
 
 admin.site.register(myModel)

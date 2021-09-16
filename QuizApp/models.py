@@ -1,8 +1,8 @@
 from django.db import models
 from UserApp.models import CustomUser
 import uuid
-
-
+from django.utils.text import slugify
+from datetime import timedelta
 class Quiz(models.Model):
     subjects =[
 
@@ -12,9 +12,15 @@ class Quiz(models.Model):
         ("maths","Maths")
         ]
     quizId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    time = models.DurationField(blank=True)
     quizDescription = models.CharField(max_length=300)
-    category = models.CharField(max_length=100,choices=subjects)
+    slug = models.SlugField(null=True, blank=True, max_length=100)
+    time = models.DurationField(blank=True)
+    category = models.CharField(max_length=100,choices=subjects,unique=True)
+
+    def save(self, *args, **kwargs):
+        value = self.category
+        self.slug = slugify(value,allow_unicode=True)
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return self.category
@@ -32,6 +38,10 @@ class Question(models.Model):
     marks = models.IntegerField(default=0)
     question = models.CharField(max_length=1000)
 
+    def get_questions(self,quiz_id):
+        question_set = Question.objects.filter(quizId = quiz_id)
+        return question_set
+
     def __str__(self):
         return self.question
 
@@ -42,6 +52,11 @@ class CorrectAnswer(models.Model):
     answer = models.CharField(max_length=100)
     checkAnswerBool = models.BooleanField(default=False)
 
+
+    def get_answer_list(self, questionID):
+        options = CorrectAnswer.objects.filter(questionID=questionID).values_list('correctAnswerID','answer')
+        return options
+
     def __str__(self):
         return self.answer
 
@@ -51,11 +66,29 @@ class UserAnswer(models.Model):
     UserId= models.ForeignKey(CustomUser,on_delete=models.PROTECT)
     questionID = models.ForeignKey(Question,on_delete=models.CASCADE)
     textAnswer = models.CharField(max_length=100, blank=True)
-    remainingTime = models.DurationField(blank=True)
-    correctAnswerID = models.ForeignKey(CorrectAnswer,on_delete=models.CASCADE)
+    remainingTime = models.DurationField(blank=True, default=timedelta(0))
+    is_correct  = models.BooleanField(default=False)
     currentScore = models.IntegerField(default=0) # doubtfull as per Rahul 
     examCompleted = models.BooleanField(default=False)
 
+    def get_unanswered_question(self,user_id,quiz):
+        answered_list = UserAnswer.objects.filter(UserId = user_id).values_list('questionID')
+        unanswered_list = Question.objects.filter(quizId=quiz).exclude(questionID__in=answered_list)
+        # print('answerd list',answered_list)
+        # print('unasnwered list', unanswered_list)
+        if len(unanswered_list) == 0:
+            return None 
+        else:
+            return unanswered_list
+
+    
+    def checkMcqAnswer(self,mcqId):
+        return
+
+    def checkOneWordAnswer(self):
+        pass
+
+
     def __str__(self):
-        return self.text_ans
+        return self.questionID.question
    

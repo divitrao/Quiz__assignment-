@@ -22,5 +22,5 @@ urlpatterns = [
     path('',include(tf_urls)),
     path('accounts/',include('django.contrib.auth.urls')),
     path('',include('UserApp.urls')),
-    #path('',include('QuizApp.urls')),
+    path('quiz/',include('QuizApp.urls')),
 ]

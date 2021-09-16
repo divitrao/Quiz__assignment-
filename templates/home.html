@@ -33,7 +33,7 @@
             
             <li class="nav-item">
 
-                <a class="nav-link p-3" href="accounts/logout"> LOG OUT </a>
+                <a class="nav-link p-3" href="{% url 'logout' %}"> LOG OUT </a>
             </li>
             {% else %}
 
@@ -50,7 +50,7 @@
 
     <h1 class="text-success font-weight-bold text-center py-4 ">Keep Challenging Yourself</h1>
    <div class="container text-center">
-    <a class="link" href="/formality">
+    <a class="link" href="{% url 'QuizApp:quizlist' %}">
         <button class="btn btn-info">Start</button>
     </a>
 
