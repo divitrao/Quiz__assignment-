@@ -16,6 +16,14 @@ class QuizzList(ListView):
     template_name = 'quizzList.html'
     context_object_name = 'quizlists'
 
+    def dispatch(self, request, *args, **kwargs) :
+        if request.GET.get('playagain') == 'True':
+            subject = request.GET.get('slug')
+            quiz = Quiz.objects.get(category=subject.lower()).quizId
+            question_list = Question.objects.filter(quizId=quiz).values_list('questionID')
+            UserAnswer.objects.filter(questionID__in=question_list,UserId=request.user.UserId).delete()
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self) :
         return Quiz.objects.all()
 
@@ -72,7 +80,7 @@ class PlayQuiz(FormView):
         quiz = get_object_or_404(Quiz,category = self.slug).quizId
         user = self.request.user.UserId
         userChoosenOption = self.request.POST.get('textAnswer')
-        if userChoosenOption is not None:
+        if userChoosenOption is not None and len(userChoosenOption.strip())!=0:
             mcq = True
             try:
                 uuid.UUID(userChoosenOption, version=4)
@@ -84,16 +92,14 @@ class PlayQuiz(FormView):
                 question_id = CorrectAnswer.objects.get(correctAnswerID = userChoosenOption).questionID_id # questionID_id is name of column in database
                 question = Question.objects.get(questionID=question_id)
                 if checkAnswer==True:
-                        marks = Question.objects.get(questionID = question_id).marks
+                        marks_mcq = Question.objects.get(questionID = question_id).marks
                         is_correct = True
                 else:
-                        marks = 0
+                        marks_mcq = 0
                         is_correct = False
-
-                currentScore = marks
                 userID = user
                 choosed_answer = CorrectAnswer.objects.get(correctAnswerID = userChoosenOption).answer
-                UserAnswer.objects.create(      currentScore=currentScore,
+                UserAnswer.objects.create(      currentScore=marks_mcq,
                                                         textAnswer = choosed_answer,
                                                         UserId_id= userID,
                                                         questionID= Question.objects.get(question = question) ,
@@ -110,14 +116,13 @@ class PlayQuiz(FormView):
                         answer_present = CorrectAnswer.objects.get(questionID=question_id).answer
                         if answer_present.strip().lower() == userGussedAnswer.strip().lower():
                             
-                            marks= Question.objects.get(questionID = question_id).marks
+                            marks_oneword= Question.objects.get(questionID = question_id).marks
                             is_correct = True
                         else:
-                            marks = 0
+                            marks_oneword = 0
                             is_correct = False
-                        currentScore = marks
                         userID = user
-                        UserAnswer.objects.create(  currentScore=currentScore,
+                        UserAnswer.objects.create(  currentScore=marks_oneword,
                                                         textAnswer = userGussedAnswer,
                                                         UserId_id= userID,
                                                         questionID= Question.objects.get(question = question) ,
@@ -129,14 +134,12 @@ class PlayQuiz(FormView):
         else:
                         question_id = self.question_and_type[0].questionID
                         question = Question.objects.get(questionID=question_id)
-                        marks = 0
-                        is_correct = False
                         userID = user
-                        UserAnswer.objects.create(  currentScore=marks,
+                        UserAnswer.objects.create(  currentScore=0,
                                                     textAnswer = 'Not Attempted',
                                                     UserId_id= userID,
                                                     questionID= Question.objects.get(question = question) ,
-                                                    is_correct=is_correct
+                                                    is_correct=False
                                                 )
         return super().form_valid(form)
 
@@ -163,16 +166,16 @@ class Result(TemplateView):
     def get_context_data(self, **kwargs):
         
         context =  super().get_context_data(**kwargs)
-        context['slug'] = self.request.path
         slug= self.kwargs.get('slugs')
         question_list = Question.objects.filter(quizId=Quiz.objects.get(category=slug).quizId).values_list('questionID')
         answer_list = UserAnswer.objects.filter(UserId = self.request.user.UserId, questionID__in = question_list)
         correct_Answers = CorrectAnswer.objects.filter( questionID__in = question_list,checkAnswerBool= 1)
         context['zipped_data'] =  zip(answer_list,correct_Answers)
-        correct_answer_marks = UserAnswer.objects.filter(questionID__in = question_list,is_correct=1).aggregate(Sum('currentScore')) #marks received 
+        correct_answer_marks = UserAnswer.objects.filter(questionID__in = question_list,UserId = self.request.user.UserId).aggregate(Sum('currentScore'))
         context['received_marks'] = correct_answer_marks['currentScore__sum']
         total_marks = Question.objects.filter(questionID__in = question_list).aggregate(Sum('marks')) #total marks of all available questions
         context['total_marks'] = total_marks['marks__sum']
+        context['slug'] = slug.upper()
         return context
   
 
