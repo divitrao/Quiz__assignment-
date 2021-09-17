@@ -71,7 +71,7 @@ class UserAnswer(models.Model):
     currentScore = models.IntegerField(default=0) # doubtfull as per Rahul 
     examCompleted = models.BooleanField(default=False)
 
-    def get_unanswered_question(self,user_id,quiz):
+    def get_unanswered_question(user_id,quiz):
         answered_list = UserAnswer.objects.filter(UserId = user_id).values_list('questionID')
         unanswered_list = Question.objects.filter(quizId=quiz).exclude(questionID__in=answered_list)
         # print('answerd list',answered_list)

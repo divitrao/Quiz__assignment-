@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import QuizzList 
-from .views import PlayQuiz
+from .views import PlayQuiz,  Result #Mytest_view,
 
 
 app_name = 'QuizApp'
@@ -8,6 +8,8 @@ app_name = 'QuizApp'
 urlpatterns = [
 
 path('quizlist',QuizzList.as_view(),name='quizlist'),
-path('<slug:slug>/',PlayQuiz.as_view(),name='playquiz')
+path('<slug>/',PlayQuiz.as_view(),name='playquiz'),
+# path('<slug:slug>/',Mytest_view,name='playquiz'),
+path('<result>/<slugs>/', Result.as_view(), name='result')
 
 ]

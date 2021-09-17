@@ -8,4 +8,20 @@
 
 <h1>Result</h1>
 
+<h1>TOTAL SCORE :  {{received_marks}} out of {{total_marks}} </h1>
+
+{% for answer,correctAnswers in zipped_data %}
+    <div>{{answer}}</div>
+    <p>Given answer =  <h3>{{answer.textAnswer}}</h3> </p>
+    
+    <div>Correct answer    <h3>{{correctAnswers}}</h3>  </div>
+
+{% endfor %}
+
+{% for correctAnswers in CorrectAnswer %}
+
+{{correctAnswers}}
+
+{% endfor %}
+
 {% endblock content %}
