@@ -6,26 +6,40 @@
 {% block content %}
 
 
-<h1>{{test}}</h1>
-<br><br><br>
-<h3>{{viewer_question}}</h3>
 
-<form   method="POST" class="form-class container" novalidate>
-    {% csrf_token %}
-    {{form|crispy}}
-    <input type="submit" class="btn btn-secondary">
-    
-</form>
+<div id="time__div" class="bg-primary text-center">
 
-<!-- <form method="POST" novalidate>
+    <div class="d-flex flex-row justify-content-center">
+
+        <div class="mr-5">
+            <h2>TIME LEFT</h2>
+        </div>
+
+        <div id="time">
+            <h2 id="countdown"></h2>
+        </div>
+    </div>
+</div>
+
+<div class="container text-center">
+    <h3>{{viewer_question}}</h3>
+
+    <form method="POST" class="form-class container" novalidate>
+        {% csrf_token %}
+        {{form|crispy}}
+        <input type="submit" class="btn btn-secondary rounded" id="answer_submission">
+
+    </form>
+
+</div>
+
+<script>
+
+    const data = JSON.parse(("{{data|escapejs}}"))
+
+</script>
 
 
-
-
-</form> -->
-
-
-
-<script  src="{% static '/javascripts/game.js'%}" type="text/javascript"></script>
+<script src="{% static '/javascripts/game.js'%}" type="text/javascript"></script>
 
 {% endblock content %}

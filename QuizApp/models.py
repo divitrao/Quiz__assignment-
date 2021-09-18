@@ -1,20 +1,21 @@
 from django.db import models
+from django.db.models.deletion import CASCADE
 from UserApp.models import CustomUser
 import uuid
 from django.utils.text import slugify
-from datetime import timedelta
 class Quiz(models.Model):
     subjects =[
 
         ("history","History"),
         ("geography","Geography"),
         ("science","science"),
-        ("maths","Maths")
+        ("maths","Maths"),
+        ("entertainment","Entertainment")
         ]
     quizId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     quizDescription = models.CharField(max_length=300)
     slug = models.SlugField(null=True, blank=True, max_length=100)
-    time = models.DurationField(blank=True)
+    alloted_time = models.IntegerField(default=5)
     category = models.CharField(max_length=100,choices=subjects,unique=True)
 
     def save(self, *args, **kwargs):
@@ -66,10 +67,8 @@ class UserAnswer(models.Model):
     UserId= models.ForeignKey(CustomUser,on_delete=models.PROTECT)
     questionID = models.ForeignKey(Question,on_delete=models.CASCADE)
     textAnswer = models.CharField(max_length=100, blank=True)
-    remainingTime = models.DurationField(blank=True, default=timedelta(0))
     is_correct  = models.BooleanField(default=False)
     currentScore = models.IntegerField(default=0) # doubtfull as per Rahul 
-    examCompleted = models.BooleanField(default=False)
 
     def get_unanswered_question(user_id,quiz):
         answered_list = UserAnswer.objects.filter(UserId = user_id).values_list('questionID')
@@ -91,4 +90,17 @@ class UserAnswer(models.Model):
 
     def __str__(self):
         return self.questionID.question
+
+class Progress(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    minutes = models.IntegerField(default=1)
+    seconds = models.IntegerField(default=60)
+    subject = models.CharField(max_length=20)
+    questionID = models.ForeignKey(Question,on_delete=models.CASCADE)
+    UserId = models.ForeignKey(CustomUser,on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.subject + ' '+ self.UserId.username
+
+
    

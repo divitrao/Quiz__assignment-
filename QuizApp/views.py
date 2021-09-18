@@ -3,12 +3,14 @@ from django.http import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import FormView
-from .models import Quiz, Question, UserAnswer, CorrectAnswer
+from django.views.generic.edit import FormView, UpdateView
+from .models import Quiz, Question, UserAnswer, CorrectAnswer, Progress
 from .forms import AnswerForm #AnswerUSerForm
 from django.urls import  reverse_lazy
 import uuid
 from django.db.models import Sum
+from json import dumps
+from django.http import JsonResponse
 
 
 class QuizzList(ListView):
@@ -22,6 +24,7 @@ class QuizzList(ListView):
             quiz = Quiz.objects.get(category=subject.lower()).quizId
             question_list = Question.objects.filter(quizId=quiz).values_list('questionID')
             UserAnswer.objects.filter(questionID__in=question_list,UserId=request.user.UserId).delete()
+            Progress.objects.filter(subject=subject.lower(),UserId=request.user.UserId).delete()
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self) :
@@ -48,7 +51,8 @@ class PlayQuiz(FormView):
         if self.request.method == 'GET':
             self.question_and_type.clear()
             self.unanswered_question = UserAnswer.get_unanswered_question(self.request.user.UserId,
-                                                                          Quiz.objects.get(category = self.slug).quizId)
+                                                                          Quiz.objects.get(category = self.slug).quizId
+                                                                          )
             if self.unanswered_question is None:
                 return render(self.request, 'progress.html')
             self.question = self.unanswered_question.first()
@@ -64,12 +68,42 @@ class PlayQuiz(FormView):
     def get_form_kwargs(self):
         if self.request.method == 'GET' :
             kwargs =  super().get_form_kwargs()
+            # del self.request.session.get('name')
+            # del self.request.session.get('user')
             return dict(kwargs,question=self.question,type=self.type)
 
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if Progress.objects.filter(UserId = self.request.user.UserId,
+                                   subject = self.slug,
+                                   questionID = self.question_and_type[0].questionID).exists():
+
+                pending_question = Progress.objects.get(UserId = self.request.user.UserId,
+                                                            subject = self.slug,
+                                                            questionID = self.question_and_type[0].questionID)
+                print(pending_question,'xxxxxxxxxxxxx')
+
+                minute = pending_question.minutes
+                seconds = pending_question.seconds
+
+        else:
+            minute = Quiz.objects.get(slug = self.slug).alloted_time
+            seconds = 0
+
+
+        print('tttttttttttttttttttttt',minute,seconds)
+
+                
+        data = {
+                    'question_id': self.question_and_type[0].questionID.hex,
+                     'user_id': self.request.user.UserId.hex,
+                     'minute': minute,
+                     'second': seconds,
+                     'subject':self.slug
+        }
         context['viewer_question'] = self.question_and_type[0]
+        context['data'] = dumps(data)
         return context
 
 
@@ -177,6 +211,38 @@ class Result(TemplateView):
         context['total_marks'] = total_marks['marks__sum']
         context['slug'] = slug.upper()
         return context
+
+
+    # class updateTime(UpdateView):
+    #     def dispatch(self, request, *args, **kwargs) :
+    #         return super().dispatch(request, *args, **kwargs)
+
+def updateTime(request):
+    if request.method == 'GET' and request.is_ajax:
+        print(request.user.UserId)
+        if Progress.objects.filter(UserId=request.user.UserId,
+                                   subject=request.GET.get('subject'),
+                                   ).exists():
+            existing_question= Progress.objects.get(UserId=request.user.UserId,subject=request.GET.get('subject'))
+            existing_question.questionID_id=PlayQuiz.question_and_type[0].questionID
+            existing_question.minutes = int(request.GET.get('minute'))
+            existing_question.seconds = int(request.GET.get('seconds'))
+            existing_question.save()
+        else:
+            Progress.objects.create(
+                UserId_id=request.user.UserId,
+                subject=request.GET.get('subject'),
+                questionID= Question.objects.get(question = PlayQuiz.question_and_type[0]),
+                minutes = int(request.GET.get('minute')),
+                seconds = int(request.GET.get('seconds'))
+
+
+            )
+            print('noooo')
+            print(PlayQuiz.question_and_type[0])
+        return JsonResponse({},status = 200)
+
+        
   
 
 # def Mytest_view(request,slug):

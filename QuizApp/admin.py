@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Quiz, Question, CorrectAnswer, UserAnswer
+from .models import Quiz, Question, CorrectAnswer, UserAnswer, Progress
 # Register your models here.
 
 
@@ -16,4 +16,5 @@ myModel = [Quiz,UserAnswer]
 
 admin.site.register(myModel)
 admin.site.register(Question,QuestionAdmin)
+admin.site.register(Progress)
 

@@ -1,10 +1,11 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.db import models
 from django.db.models.query import QuerySet
 from django.forms import fields
 from .models import UserAnswer
 from django.forms.widgets import RadioSelect
-from .models import CorrectAnswer
+from .models import CorrectAnswer, Progress
 
 
 class AnswerUSerForm(forms.ModelForm):
@@ -65,6 +66,11 @@ class AnswerForm(forms.ModelForm):
         else:
             self.fields['textAnswer'] = forms.CharField(max_length=50, required=False,)
           
+
+class Addprogress(forms.ModelForm):
+    class Meta:
+        model = Progress
+        fields = ('minutes','seconds',)
                 
            
         
