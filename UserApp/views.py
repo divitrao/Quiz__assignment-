@@ -9,5 +9,5 @@ class home_page(TemplateView):
 
 class SignupView(CreateView):
     form_class = CustomUserCreationForm
-    success_url = '/account/two_factor/setup/' #reverse_lazy('login')
+    success_url = '/account/two_factor/setup/' 
     template_name = 'registration/signup.html'
