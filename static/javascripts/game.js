@@ -1,9 +1,5 @@
 
 
-starttime(data)
-
-
-
 function starttime(data){
     let minute = data['minute']
     let second = data['second']
@@ -67,28 +63,39 @@ else{
     // window.localStorage.setItem(`minute_${data['subject']}`, minute)
     // window.localStorage.setItem(`seconds_${data['subject']}`, second)
     // window.localStorage.setItem(`submitted_${data['subject']}`, false)
-    let cookie = document.cookie
-    let csrfToken = cookie.substring(cookie.indexOf('=')+1)
 
 
-    $.ajax({
-        type: 'POST',
-        headers: {'X-CSRFToken': csrfToken},
-        url: 'http://127.0.0.1:8000/quiz/timeupdate',
-        data :{ 
-                'minute':minute,
-                'seconds':second,
-                'subject': data['subject']
-                },
-        async : true
-    })
+    // $.ajax({
+    //     type: 'POST',
+    //     headers: {'X-CSRFToken': csrfToken},
+    //     url: 'http://127.0.0.1:8000/quiz/timeupdate',
+    //     data :{ 
+    //             'minute':minute,
+    //             'seconds':second,
+    //             'subject': data['subject']
+    //             },
+    //     async : true
+    // })
     
 
 }
 
 },1000)
+
+$(window).on('unload ',function(){
+    window.localStorage.setItem('myname','divit')
+    let cookie = document.cookie
+    let csrfToken = cookie.substring(cookie.indexOf('=')+1)
+    let form_data = new FormData()
+    form_data.append('csrfmiddlewaretoken', csrfToken)
+    form_data.append("minute", minute)
+    form_data.append("seconds",second)
+    form_data.append('subject',data['subject'])
+    navigator.sendBeacon('http://127.0.0.1:8000/quiz/timeupdate',form_data)
+
+})
 }
 
 
 
-
+starttime(data)

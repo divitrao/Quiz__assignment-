@@ -1,11 +1,7 @@
-import json
-from django.contrib.auth import views
-from django.db import models
-from django.http import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import FormView
 from .models import Quiz, Question, UserAnswer, CorrectAnswer, Progress
 from .forms import AnswerForm #AnswerUSerForm
 from django.urls import  reverse_lazy
@@ -277,6 +273,8 @@ class updateTime(View):
             )
             
         return JsonResponse({},status = 200)
+
+
 
 # def updateTime(request):
 #     if request.method == 'POST' and request.is_ajax:
