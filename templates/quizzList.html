@@ -41,9 +41,12 @@
                     <div class="d-flex justify-content-around align-items-center text-center ">
                         {% if pending == total %}
                         <small class="font-weight-bold ">{{description}}</small>
+                        {% elif pending == 0 %}
+                        <small class="font-weight-bold ">{{description}} </small><br>
+                        <small class="text-success">Test Completed</small></small>
                         {% else %}
                         <small class="font-weight-bold ">{{description}} </small><br>
-                        <small class="text-muted">{{pending}} pending questions to attempt</small></small>
+                        <small class="text-danger">{{pending}} pending questions to attempt</small></small>
                         {% endif %}
                     </div>
                     

@@ -50,9 +50,12 @@ class QuizzList(ListView):
         context['quizlists'] = Quiz.objects.all()
         quiz_list = Quiz.objects.all().values('category')
         for subjects in quiz_list:
-            unanswered_question_length =len(UserAnswer.get_unanswered_question(self.request.user.UserId,
+            try:
+                unanswered_question_length =len(UserAnswer.get_unanswered_question(self.request.user.UserId,
                                                                           Quiz.objects.get(category = subjects['category']).quizId
                                                                           ))
+            except:
+                unanswered_question_length = 0
             total_question.append(Question.objects.filter(quizId = Quiz.objects.get(category = subjects['category']).quizId ).count())
             quiz_description.append(Quiz.objects.get(category = subjects['category']).quizDescription)
             pending_question.append(unanswered_question_length)
