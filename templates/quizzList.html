@@ -4,25 +4,47 @@
 
 {% load crispy_forms_tags %}
 {% block content %}
+<link href="{% static 'style/quizzList.css'  %}" rel="stylesheet">
+<nav class="navbar navbar-expand-lg bg-light w-100">
+    <ul class="navbar-nav  navbar-center">
 
+        <li class="nav-item">
+            <h3 class="">
+                <!-- Choose the subject you want to play with   -->
+            </h3> 
+        </li>
 
+        
 
-<!-- {{quizlists}} -->
+    </ul>
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a href="/"><h3>HOME</h3></a>
+
+        </li>
+    </ul>
+
+</nav>
+
 <div class="text-center py-4">
-<h1>
-    Choose the subject you want to play with
-</h1>
+<h3>
+    Choose the subject you want to play with 
+</h3>
 </div>
-<div class="row">
-    {% for quiz in quizlists %}
-    <div class="col-md-4">
-        <a class="text-dark" href="{% url 'QuizApp:playquiz' slug=quiz.slug %}">
+<div class="row mt-5">
+    {% for description,pending,total,slug,time in zippedData %}
+    <div class="col-md-4" title=" you have {{time}} minutes for each question">
+        <a class="text-dark" href="{% url 'QuizApp:playquiz' slug=slug %}">
             <div class="card mb-4 box-shadow">
                 <div class="card-body text-center">
                    
-                    <div class="d-flex justify-content-between align-items-center ">
-                        <small class="font-weight-bold">{{quiz.quizDescription}}</small>
-                     
+                    <div class="d-flex justify-content-around align-items-center text-center ">
+                        {% if pending == total %}
+                        <small class="font-weight-bold ">{{description}}</small>
+                        {% else %}
+                        <small class="font-weight-bold ">{{description}} </small><br>
+                        <small class="text-muted">{{pending}} pending questions to attempt</small></small>
+                        {% endif %}
                     </div>
                     
                 </div>
@@ -32,5 +54,47 @@
     {% endfor %}
 </div>
 
+
+<div class="info">
+    <div class="text-center">
+        <strong>NOTE</strong> 
+    </div>
+    
+    <div class="d-flex flex-column justify-content-start ">
+        <div>
+            <p>If you want to leave test in between then not to worry your test will continue again from the same question where you left </p>
+        </div>
+
+        <div>
+            <p>For one word answer letter case does not matter you can type answer in any case </p>
+        </div>
+    </div>
+
+            
+        
+       
+           
+    
+   
+</div>
+<br>
+<!-- <div class="row mt-5">
+    {% for quiz in quizlists %}
+    <div class="col-md-4">
+        <a class="text-dark" href="{% url 'QuizApp:playquiz' slug=quiz.slug %}">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body text-center">
+                   
+                    <div class="d-flex justify-content-center align-items-center text-center ">
+                        <small class="font-weight-bold ">{{quiz.quizDescription}}</small>
+                     
+                    </div>
+                    
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div> -->
 
 {% endblock content %}

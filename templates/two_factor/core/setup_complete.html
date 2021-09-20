@@ -2,25 +2,33 @@
 {% load i18n %}
 
 {% block content %}
-  <h1>{% block title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}</h1>
+<div class="d-flex flex-column justify-content-center">
+  <div>
+<h1 class="text-center">{% block title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}</h1>
+</div>
+<div>
+<p class="text-center">{% blocktrans trimmed %}Congratulations, you've successfully enabled two-factor
+  authentication.{% endblocktrans %}</p>
+</div>
+{% if not phone_methods %}
+<p class="text-center"><a href="/" class="btn  btn-primary">{% trans "Back to Home " %}</a></p>
 
-  <p>{% blocktrans trimmed %}Congratulations, you've successfully enabled two-factor
-      authentication.{% endblocktrans %}</p>
+  <div>
+    <p class="text-center"> <strong>click the below button to disable the 2 factor authentication or get some
+        backup Token</strong> </p>
+  </div>
+  <div class="text-center">
+    <a href="{% url 'two_factor:profile' %}" class="btn  btn-primary ">Click me </a>
+  </div>
+</div>
 
-  {% if not phone_methods %}
-    <p><a href="/"
-        class="btn btn-block btn-default">{% trans "Back to Home " %}</a></p>
-    <p> click the below button to disable the 2 factor authentication or get some backup Token </p>
-    <a  href="{% url 'two_factor:profile' %}" class="btn btn-block btn-default">Click me </a>
-  {% else %}
-    <p>{% blocktrans trimmed %}However, it might happen that you don't have access to
-      your primary token device. To enable account recovery, add a phone 
-      number.{% endblocktrans %}</p>
+{% else %}
+<p class="text-center">{% blocktrans trimmed %}However, it might happen that you don't have access to
+  your primary token device. To enable account recovery, add a phone
+  number.{% endblocktrans %}</p>
 
-    <a href="{% url 'two_factor:profile' %}"
-        class="pull-right btn btn-link">{% trans "Back to Profile" %}</a>
-    <p><a href="{% url 'two_factor:phone_create' %}"
-        class="btn btn-success">{% trans "Add Phone Number" %}</a></p>
-  {% endif %}
+<a href="{% url 'two_factor:profile' %}" class="pull-right btn btn-link">{% trans "Back to Profile" %}</a>
+<p><a href="{% url 'two_factor:phone_create' %}" class="btn btn-success">{% trans "Add Phone Number" %}</a></p>
+{% endif %}
 
 {% endblock %}

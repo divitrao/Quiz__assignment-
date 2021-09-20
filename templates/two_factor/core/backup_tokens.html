@@ -2,25 +2,28 @@
 {% load i18n %}
 
 {% block content %}
-  <h1>{% block title %}{% trans "Backup Tokens" %}{% endblock %}</h1>
-  <p>{% blocktrans trimmed %}Backup tokens can be used when your primary and backup
+  <h1 class="text-center">{% block title %}{% trans "Backup Tokens" %}{% endblock %}</h1>
+  <p class="">{% blocktrans trimmed %}Backup tokens can be used when your primary and backup
       phone numbers aren't available. The backup tokens below can be used
       for login verification. If you've used up all your backup tokens, you
       can generate a new set of backup tokens. Only the backup tokens shown
       below will be valid.{% endblocktrans %}</p>
 
   {% if device.token_set.count %}
-    <ul>
+  <div class="text-center">
+    
       {% for token in device.token_set.all %}
-        <li>{{ token.token }}</li>
+      {{forloop.counter}}) {{ token.token }}
+        <br>
       {% endfor %}
-    </ul>
-    <p>{% blocktrans %}Print these tokens and keep them somewhere safe.{% endblocktrans %}</p>
+    
+  </div>
+    <p class="text-center">{% blocktrans %}Remember any one of the above Token and then you can use it while login{% endblocktrans %}</p>
   {% else %}
-    <p>{% trans "You don't have any backup codes yet." %}</p>
+    <p class="text-center">{% trans "You don't have any backup codes yet." %}</p>
   {% endif %}
 
-  <form method="post">{% csrf_token %}{{ form }}
+  <form class="text-center" method="post">{% csrf_token %}{{ form }}
     <a href="{% url 'two_factor:profile'%}"
        class="pull-right btn btn-link">{% trans "Back to Account Security" %}</a>
       <a href="/">Go to Home</a>

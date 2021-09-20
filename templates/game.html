@@ -6,7 +6,7 @@
 {% block content %}
 
 
-
+<link href="{% static 'style/game.css'  %}" rel="stylesheet">
 <div id="time__div" class="bg-primary text-center">
 
     <div class="d-flex flex-row justify-content-center">
@@ -24,7 +24,7 @@
 <div class="container text-center">
     <h3>{{viewer_question}}</h3>
 
-    <form method="POST" class="form-class container" novalidate>
+    <form method="POST" class="" novalidate>
         {% csrf_token %}
         {{form|crispy}}
         <input type="submit" class="btn btn-secondary rounded" id="answer_submission">
@@ -32,6 +32,8 @@
     </form>
 
 </div>
+
+
 
 <script>
 

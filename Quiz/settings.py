@@ -59,7 +59,7 @@ INSTALLED_APPS = [
 SITE_ID = 1 
 AUTH_USER_MODEL = 'UserApp.CustomUser' 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
+LOGIN_URL = '/account/login/'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

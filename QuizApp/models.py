@@ -10,7 +10,8 @@ class Quiz(models.Model):
         ("geography","Geography"),
         ("science","science"),
         ("maths","Maths"),
-        ("entertainment","Entertainment")
+        ("entertainment","Entertainment"),
+        ('vehicle','vehicle')
         ]
     quizId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     quizDescription = models.CharField(max_length=300)
@@ -66,7 +67,7 @@ class UserAnswer(models.Model):
     answerId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     UserId= models.ForeignKey(CustomUser,on_delete=models.PROTECT)
     questionID = models.ForeignKey(Question,on_delete=models.CASCADE)
-    textAnswer = models.CharField(max_length=100, blank=True)
+    textAnswer = models.CharField(max_length=100, blank=True, verbose_name="")
     is_correct  = models.BooleanField(default=False)
     currentScore = models.IntegerField(default=0) # doubtfull as per Rahul 
 

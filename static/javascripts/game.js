@@ -1,10 +1,5 @@
 
 
-$('#answer_submission').click(function(){
-    window.localStorage.setItem(`submitted_${data['subject']}`, true)
-})
-
-
 starttime(data)
 
 
@@ -72,15 +67,20 @@ else{
     // window.localStorage.setItem(`minute_${data['subject']}`, minute)
     // window.localStorage.setItem(`seconds_${data['subject']}`, second)
     // window.localStorage.setItem(`submitted_${data['subject']}`, false)
+    let cookie = document.cookie
+    let csrfToken = cookie.substring(cookie.indexOf('=')+1)
+
 
     $.ajax({
-        type: 'GET',
+        type: 'POST',
+        headers: {'X-CSRFToken': csrfToken},
         url: 'http://127.0.0.1:8000/quiz/timeupdate',
-        data :{'minute':minute,
+        data :{ 
+                'minute':minute,
                 'seconds':second,
                 'subject': data['subject']
                 },
-        async : false
+        async : true
     })
     
 
