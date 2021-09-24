@@ -53,9 +53,7 @@ class CorrectAnswer(models.Model):
     answer = models.CharField(max_length=100)
     checkAnswerBool = models.BooleanField(default=False)
 
-    def qqq(self):
-        print(self,'lllllllllllllllllllll')
-
+    
     def get_answer_list(self, questionID):
         options = CorrectAnswer.objects.filter(questionID=questionID).values_list('correctAnswerID','answer')
         return options

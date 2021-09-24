@@ -1,7 +1,6 @@
 from django import forms
-from .models import UserAnswer
 from django.forms.widgets import RadioSelect
-from .models import CorrectAnswer
+from .models import CorrectAnswer, UserAnswer
 import time
 
 

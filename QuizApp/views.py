@@ -15,7 +15,7 @@ from django.views import View
 
 
 @method_decorator(login_required, name='dispatch')
-class QuizzList(ListView):
+class QuizList(ListView):
     model = Quiz
     template_name = 'quizzList.html'
     context_object_name = 'quizlists'
@@ -191,6 +191,7 @@ class Result(TemplateView):
             return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        
         '''
         Result page , it is collecting all questions,
         there correct answer and user answer, also collecting 
@@ -216,7 +217,7 @@ class Result(TemplateView):
         return context
 
 
-class updateTime(View):
+class UpdateTime(View):
     def dispatch(self, request) :
         if request.method == 'POST' and request.is_ajax:
             if Progress.objects.filter(UserId=request.user.UserId,
