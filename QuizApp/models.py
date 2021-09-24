@@ -53,6 +53,9 @@ class CorrectAnswer(models.Model):
     answer = models.CharField(max_length=100)
     checkAnswerBool = models.BooleanField(default=False)
 
+    def qqq(self):
+        print(self,'lllllllllllllllllllll')
+
     def get_answer_list(self, questionID):
         options = CorrectAnswer.objects.filter(questionID=questionID).values_list('correctAnswerID','answer')
         return options
@@ -69,7 +72,7 @@ class UserAnswer(models.Model):
     is_correct  = models.BooleanField(default=False)
     currentScore = models.IntegerField(default=0) # doubtfull as per Rahul 
 
-    def get_unanswered_question(user_id,quiz):
+    def get_unanswered_question(self, user_id,quiz):
         answered_list = UserAnswer.objects.filter(UserId = user_id).values_list('questionID')
         unanswered_list = Question.objects.filter(quizId=quiz).exclude(questionID__in=answered_list)
         if len(unanswered_list) == 0:

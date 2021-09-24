@@ -23,21 +23,21 @@
     </h3>
 </div>
 <div class="row mt-5">
-    {% for description,pending,total,slug,time in zippedData %}
-    <div class="col-md-4" title=" you have {{time}} minutes for each question">
-        <a class="text-dark" href="{% url 'QuizApp:playquiz' slug=slug %}">
+    {% for data in zippedData %}
+    <div class="col-md-4" title=" you have {{data.time}} minutes for each question">
+        <a class="text-dark" href="{% url 'QuizApp:playquiz' slug=data.slugs %}">
             <div class="card mb-4 box-shadow">
                 <div class="card-body text-center">
 
                     <div class="d-flex justify-content-around align-items-center text-center ">
-                        {% if pending == total %}
-                        <small class="font-weight-bold ">{{description}}</small>
-                        {% elif pending == 0 %}
-                        <small class="font-weight-bold ">{{description}} </small><br>
+                        {% if data.pending_question == data.total_question %}
+                        <small class="font-weight-bold ">{{data.quiz_description}}</small>
+                        {% elif data.pending_question == 0 %}
+                        <small class="font-weight-bold ">{{data.quiz_description}} </small><br>
                         <small class="text-success">Test Completed</small></small>
                         {% else %}
-                        <small class="font-weight-bold ">{{description}} </small><br>
-                        <small class="text-danger">{{pending}} pending questions to attempt</small></small>
+                        <small class="font-weight-bold ">{{data.quiz_description}} </small><br>
+                        <small class="text-danger">{{data.pending_question}} pending questions to attempt</small></small>
                         {% endif %}
                     </div>
 
@@ -47,6 +47,7 @@
     </div>
     {% endfor %}
 </div>
+
 
 
 <div class="info">
