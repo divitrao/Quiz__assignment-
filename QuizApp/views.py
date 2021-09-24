@@ -1,10 +1,16 @@
-from django.db.models.query import QuerySet
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView
-from .serializers import QuizSerializer
-from .models import Quiz
-# Create your views here.
+from rest_framework.views import APIView
+from .models import Quiz, Question, Answer
+from .serializers import QuizSerializers, QuestionSerializers
+from rest_framework.response import Response
 
 class ListQuiz(ListAPIView):
     queryset = Quiz.objects.all()
-    serializer_class = QuizSerializer
+    serializer_class = QuizSerializers
+
+class ListQuestions(APIView):
+    def get(self, request, format=None, **kwargs):
+        questions = Question.objects.filter(quiz__category=kwargs['slug'])
+        serializer = QuestionSerializers(questions, many = True)
+        return Response(serializer.data)

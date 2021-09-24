@@ -1,18 +1,23 @@
 from django.contrib import admin
-from .models import Quiz, Answer, Question
-# Register your models here.
+from .models import Quiz, Question, Answer
+
+
 
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['category','alloted_time']
 
 class AnswerAdmin(admin.TabularInline):
     model = Answer
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    inlines = [AnswerAdmin,]
-    list_display = ['question','type','marks','quizId']
+    list_display = ['question','type','marks','quiz']
+    inlines = [AnswerAdmin]
 
-
+@admin.register(Answer)
+class AnswerAdmin(admin.ModelAdmin):
+    list_display = [ 
+        'options','checkAnswerBool','question',
+    ]
 

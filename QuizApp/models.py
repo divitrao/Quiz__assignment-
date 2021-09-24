@@ -33,7 +33,7 @@ class Question(models.Model):
         ("one_word","one_word")
     ]
     id= models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    quizId = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='questions')
     type = models.CharField(max_length=30,choices=question_type)
     marks = models.IntegerField(default=0)
     question = models.CharField(max_length=1000)
@@ -44,7 +44,7 @@ class Question(models.Model):
 
 class Answer(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
-    questionID = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
     options = models.CharField(max_length=100)
     checkAnswerBool = models.BooleanField(default=False)
 

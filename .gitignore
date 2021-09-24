@@ -1,1 +1,10 @@
-migrations
+myVenv
+migrations/*
+!migrations/__init__.py
+migrations/__init__.py
+pycache
+*.vscode
+db.sqlite3
+__pycache__
+QuizApp/__pycache__
+UserApp/__pycache__
