@@ -2,8 +2,9 @@
 {% load static %}
 {% block title %}HOME{% endblock title %}
 {% load crispy_forms_tags %}
+{% block css %} <link href="{% static 'style/quizzList.css'  %}" rel="stylesheet"> {% endblock css %}
 {% block content %}
-<link href="{% static 'style/quizzList.css'  %}" rel="stylesheet">
+
 <nav class="navbar navbar-expand-lg bg-light w-100">
     
     <ul class="navbar-nav ml-auto">

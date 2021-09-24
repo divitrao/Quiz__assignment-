@@ -83,7 +83,8 @@ else{
 
 },1000)
 
-$('#answer_submission').click(function(){
+function send_data_to_database(){
+
     let cookie = document.cookie
     let csrfToken = cookie.substring(cookie.indexOf('=')+1)
     let form_data = new FormData()
@@ -94,19 +95,17 @@ $('#answer_submission').click(function(){
     form_data.append('questionid',data['question_id'])
     navigator.sendBeacon('http://127.0.0.1:8000/quiz/timeupdate',form_data)
 
+}
+
+$('#answer_submission').click(function(){
+   
+    send_data_to_database()
+
 })
 
 document.addEventListener('visibilitychange',function(){
     if(document.visibilityState === 'hidden'){
-        let cookie = document.cookie
-        let csrfToken = cookie.substring(cookie.indexOf('=')+1)
-        let form_data = new FormData()
-        form_data.append('csrfmiddlewaretoken', csrfToken)
-        form_data.append("minute", minute)
-        form_data.append("seconds",second)
-        form_data.append('subject',data['subject'])
-        form_data.append('questionid',data['question_id'])
-        navigator.sendBeacon('http://127.0.0.1:8000/quiz/timeupdate',form_data)
+        send_data_to_database()
     }
 })
 
