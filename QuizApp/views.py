@@ -75,9 +75,7 @@ class PlayQuiz(FormView):
     
     def get_form(self, *args, **kwargs):
             self.unanswered_question = UserAnswer.get_unanswered_question(self = self, user_id = self.request.user.UserId,
-                                                                          quiz = Quiz.objects.get(category=self.slug).quizId)  
-                                                                          
-                                                                          
+                                                                          quiz = Quiz.objects.get(category=self.slug).quizId)                                                              
             self.question = self.unanswered_question.first()
             self.type = self.question.type
             return self.form_class(**self.get_form_kwargs())
