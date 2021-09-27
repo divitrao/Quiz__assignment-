@@ -1,7 +1,7 @@
 myVenv
-**/migrations/**
-!**/migrations
-!**migrations/__init__.py
+frontend/
+migrations/*
+!migrations/__init__.py
 pycache
 *.vscode
 db.sqlite3
