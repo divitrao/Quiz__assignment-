@@ -60,10 +60,15 @@
 
 <a class="btn btn-block btn-primary py-4 mt-4" href="{% url 'QuizApp:quizlist' %}?playagain=True&slug={{slug}}">play again</a>
 
+
+
+{% endblock %}
+
+{% block javascripts %}
 <script>
 
     const data = JSON.parse(("{{zipped_data_js|escapejs}}"))
 
 </script>
 <script src="{% static '/javascripts/progress.js'%}" type="text/javascript"></script>
-{% endblock %}
+{% endblock javascripts %}
