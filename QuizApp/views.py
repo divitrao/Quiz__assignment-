@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import  redirect, get_object_or_404
 from django.views.generic import ListView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -24,13 +24,13 @@ class QuizList(ListView):
         
         if request.GET.get('playagain') == 'True':
             subject = request.GET.get('slug')
-            quiz = Quiz.objects.get(category=subject.lower()).quizId
-            question_list = Question.objects.filter(quizId=quiz)\
-                            .values_list('questionID')
-            UserAnswer.objects.filter(questionID__in=question_list,
-                                      UserId=request.user.UserId).delete()
+            quiz = Quiz.objects.get(category=subject.lower()).id
+            question_list = Question.objects.filter(id=quiz)\
+                            .values_list('id')
+            UserAnswer.objects.filter(question__in=question_list,
+                                      user=request.user.id).delete()
             Progress.objects.filter(subject=subject.lower(),
-                                    UserId=request.user.UserId).delete()
+                                    user=request.user.id).delete()
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -43,14 +43,14 @@ class QuizList(ListView):
             quiz_display_object = {}
             try:
                 unanswered_question_length = len(UserAnswer.get_unanswered_question(self = self, 
-                                                    user_id = self.request.user.UserId,
-                                                  quiz = Quiz.objects.get(category = subjects['category']).quizId) )
+                                                    user_id = self.request.user.id,
+                                                  quiz = Quiz.objects.get(category = subjects['category']).id) )
                                                
             except:
                 unanswered_question_length = 0
 
-            quiz_display_object['total_question'] = Question.objects.filter(quizId=Quiz.objects.get(category=subjects['category']).quizId ).count()
-            quiz_display_object['quiz_description'] = Quiz.objects.get(category = subjects['category']).quizDescription
+            quiz_display_object['total_question'] = Question.objects.filter(quiz=Quiz.objects.get(category=subjects['category']).id ).count()
+            quiz_display_object['quiz_description'] = Quiz.objects.get(category = subjects['category']).quiz_description
             quiz_display_object['pending_question'] = unanswered_question_length
             quiz_display_object['slugs'] = Quiz.objects.get(category=subjects['category']).slug
             quiz_display_object['time'] = Quiz.objects.get(category=subjects['category']).alloted_time
@@ -67,15 +67,15 @@ class PlayQuiz(FormView):
 
     def dispatch(self, request, *args, **kwargs):
         self.slug = self.kwargs.get('slug')
-        quiz = get_object_or_404(Quiz,category=self.slug).quizId  
-        if UserAnswer.get_unanswered_question(self = self, user_id=self.request.user.UserId, quiz=quiz) is None:
+        quiz = get_object_or_404(Quiz,category=self.slug).id  
+        if UserAnswer.get_unanswered_question(self = self, user_id=self.request.user.id, quiz=quiz) is None:
             return redirect('QuizApp:result', result='result', slugs=self.slug)
         return super().dispatch(request, *args, **kwargs)
 
     
     def get_form(self, *args, **kwargs):
-            self.unanswered_question = UserAnswer.get_unanswered_question(self = self, user_id = self.request.user.UserId,
-                                                                          quiz = Quiz.objects.get(category=self.slug).quizId)                                                              
+            self.unanswered_question = UserAnswer.get_unanswered_question(self = self, user_id = self.request.user.id,
+                                                                          quiz = Quiz.objects.get(category=self.slug).id)                                                              
             self.question = self.unanswered_question.first()
             self.type = self.question.type
             return self.form_class(**self.get_form_kwargs())
@@ -88,13 +88,13 @@ class PlayQuiz(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if Progress.objects.filter(UserId=self.request.user.UserId,
+        if Progress.objects.filter(user=self.request.user.id,
                                    subject=self.slug,
-                                   questionID=self.question.questionID).exists():
+                                   question=self.question.id).exists():
 
-                pending_question = Progress.objects.get(UserId=self.request.user.UserId,
+                pending_question = Progress.objects.get(user=self.request.user.id,
                                                         subject=self.slug,
-                                                        questionID=self.question.questionID
+                                                        question=self.question.id
                                                         )
                 minute = pending_question.minutes
                 seconds = pending_question.seconds
@@ -102,8 +102,8 @@ class PlayQuiz(FormView):
             minute = Quiz.objects.get(slug=self.slug).alloted_time
             seconds = 0  
         data = {
-                    'question_id': self.question.questionID.hex,
-                    'user_id': self.request.user.UserId.hex,
+                    'question_id': self.question.id.hex,
+                    'user_id': self.request.user.id.hex,
                     'minute': minute,
                     'second': seconds,
                     'subject': self.slug}                  
@@ -113,8 +113,8 @@ class PlayQuiz(FormView):
 
    
     def form_valid(self, form):
-        user = self.request.user.UserId
-        userChoosenOption = form.cleaned_data['textAnswer']
+        user = self.request.user.id
+        userChoosenOption = form.cleaned_data['user_answer']
         if userChoosenOption is not None and len(userChoosenOption.strip())!=0:
             mcq = True
             try:
@@ -123,53 +123,53 @@ class PlayQuiz(FormView):
                 mcq= False
             if mcq:
 
-                checkAnswer = CorrectAnswer.objects.get(correctAnswerID=userChoosenOption).checkAnswerBool
-                question_id = CorrectAnswer.objects.get(correctAnswerID=userChoosenOption).questionID_id # questionID_id is name of column in database
-                question = Question.objects.get(questionID=question_id)
+                checkAnswer = CorrectAnswer.objects.get(id=userChoosenOption).check_answer_bool
+                question_id = CorrectAnswer.objects.get(id=userChoosenOption).question_id # questionID_id is name of column in database
+                question = Question.objects.get(id=question_id)
                 if checkAnswer is True:
-                        marks_mcq = Question.objects.get(questionID=question_id).marks
+                        marks_mcq = Question.objects.get(id=question_id).marks
                         is_correct = True
                 else:
                         marks_mcq = 0
                         is_correct = False
-                userID = user
-                choosed_answer = CorrectAnswer.objects.get(correctAnswerID=userChoosenOption).answer
-                UserAnswer.objects.create( currentScore=marks_mcq,
-                                           textAnswer=choosed_answer,
-                                           UserId_id=userID,
-                                           questionID=Question.objects.get(question=question) ,
+                # userID = user
+                choosed_answer = CorrectAnswer.objects.get(id=userChoosenOption).answer
+                UserAnswer.objects.create( current_score=marks_mcq,
+                                           user_answer=choosed_answer,
+                                           user_id=user,
+                                           question=Question.objects.get(question=question) ,
                                            is_correct=is_correct
                                         )        
 
             else:
                             
-                        userGussedAnswer = self.request.POST.get('textAnswer')
-                        question_id =  self.question.questionID
-                        question = Question.objects.get(questionID=question_id)
-                        answer_present = CorrectAnswer.objects.get(questionID=question_id).answer
+                        userGussedAnswer = self.request.POST.get('user_answer')
+                        question_id =  self.question.id
+                        question = Question.objects.get(id=question_id)
+                        answer_present = CorrectAnswer.objects.get(question=question_id).answer
                         if answer_present.strip().lower() == userGussedAnswer.strip().lower():
                             
-                            marks_oneword= Question.objects.get(questionID = question_id).marks
+                            marks_oneword= Question.objects.get(id = question_id).marks
                             is_correct = True
                         else:
                             marks_oneword = 0
                             is_correct = False
 
-                        userID = user
-                        UserAnswer.objects.create(  currentScore=marks_oneword,
-                                                    textAnswer = userGussedAnswer,
-                                                    UserId_id= userID,
-                                                    questionID= Question.objects.get(question = question) ,
+                        
+                        UserAnswer.objects.create(  current_score=marks_oneword,
+                                                    user_answer = userGussedAnswer,
+                                                    user_id= user,
+                                                    question= Question.objects.get(question = question) ,
                                                     is_correct=is_correct
                                                 )
         else:
-                        question_id =  self.question.questionID
-                        question = Question.objects.get(questionID=question_id)
-                        userID = user
-                        UserAnswer.objects.create(  currentScore=0,
-                                                    textAnswer = 'Not Attempted',
-                                                    UserId_id= userID,
-                                                    questionID= Question.objects.get(question = question),
+                        question_id =  self.question.id
+                        question = Question.objects.get(id=question_id)
+                        
+                        UserAnswer.objects.create(  current_score=0,
+                                                    user_answer = 'Not Attempted',
+                                                    user_id= user,
+                                                    question= Question.objects.get(question = question),
                                                     is_correct=False)
                                                  
         return super().form_valid(form)
@@ -185,8 +185,8 @@ class Result(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
             self.slug = self.kwargs.get('slugs')
-            quiz = get_object_or_404(Quiz,category = self.slug).quizId
-            if UserAnswer.get_unanswered_question(self = self, user_id=self.request.user.UserId,quiz=quiz) != None:
+            quiz = get_object_or_404(Quiz,category = self.slug).id
+            if UserAnswer.get_unanswered_question(self = self, user_id=self.request.user.id,quiz=quiz) != None:
                 return redirect('QuizApp:quizlist')
             return super().dispatch(request, *args, **kwargs)
 
@@ -201,18 +201,18 @@ class Result(TemplateView):
         
         context =  super().get_context_data(**kwargs)
         slug= self.kwargs.get('slugs')
-        question_list = Question.objects.filter(quizId=Quiz.objects.get(category=slug).quizId).values_list('questionID')
-        answer_list = UserAnswer.objects.filter(UserId = self.request.user.UserId, questionID__in = question_list)
-        correct_Answers = CorrectAnswer.objects.filter( questionID__in=question_list,checkAnswerBool=1)
+        question_list = Question.objects.filter(quiz=Quiz.objects.get(category=slug).id).values_list('id')
+        answer_list = UserAnswer.objects.filter(user = self.request.user.id, question__in = question_list)
+        correct_Answers = CorrectAnswer.objects.filter( question__in=question_list,check_answer_bool=1)
         context['zipped_data'] =  zip(answer_list,correct_Answers)
-        correct_answer_marks = UserAnswer.objects.filter(questionID__in=question_list,UserId = self.request.user.UserId).aggregate(Sum('currentScore'))
-        context['received_marks'] = correct_answer_marks['currentScore__sum']
-        total_marks = Question.objects.filter(questionID__in=question_list).aggregate(Sum('marks')) #total marks of all available questions
+        correct_answer_marks = UserAnswer.objects.filter(question__in=question_list,user = self.request.user.id).aggregate(Sum('current_score'))
+        context['received_marks'] = correct_answer_marks['current_score__sum']
+        total_marks = Question.objects.filter(id__in=question_list).aggregate(Sum('marks')) #total marks of all available questions
         context['total_marks'] = total_marks['marks__sum']
         context['slug'] = slug.upper()
         context['zipped_data_js'] =  dumps({
-                                            'user_answer': list(UserAnswer.objects.filter(UserId=self.request.user.UserId, questionID__in=question_list).values('textAnswer')),
-                                            'correct_answer': list(CorrectAnswer.objects.filter( questionID__in=question_list,checkAnswerBool=1).values('answer'))
+                                            'user_answer': list(UserAnswer.objects.filter(user=self.request.user.id, question__in=question_list).values('user_answer')),
+                                            'correct_answer': list(CorrectAnswer.objects.filter( question__in=question_list,check_answer_bool=1).values('answer'))
                                              })
         return context
 
@@ -220,19 +220,19 @@ class Result(TemplateView):
 class UpdateTime(View):
     def dispatch(self, request) :
         if request.method == 'POST' and request.is_ajax:
-            if Progress.objects.filter(UserId=request.user.UserId,
+            if Progress.objects.filter(user=request.user.id,
                                        subject=request.POST.get('subject')).exists():
                                      
-                existing_question=Progress.objects.get(UserId=request.user.UserId,subject=request.POST.get('subject'))
-                existing_question.questionID_id=Question.objects.get(questionID = request.POST.get('questionid'))
+                existing_question=Progress.objects.get(user=request.user.id,subject=request.POST.get('subject'))
+                existing_question.question_id=Question.objects.get(id=request.POST.get('questionid'))
                 existing_question.minutes=int(request.POST.get('minute'))
                 existing_question.seconds=int(request.POST.get('seconds'))
                 existing_question.save()
             else:
                 Progress.objects.create(
-                                        UserId_id=request.user.UserId,
+                                        user_id=request.user.id,
                                         subject=request.POST.get('subject'),
-                                        questionID=Question.objects.get(questionID = request.POST.get('questionid')),
+                                        question=Question.objects.get(id=request.POST.get('questionid')),
                                         minutes=int(request.POST.get('minute')),
                                         seconds=int(request.POST.get('seconds'))
                                         )
