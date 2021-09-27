@@ -66,9 +66,9 @@ class UserAnswer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user= models.ForeignKey(CustomUser,on_delete=models.PROTECT)
     question = models.ForeignKey(Question,on_delete=models.CASCADE)
-    user_answer = models.CharField(max_length=100, blank=True, verbose_name="") #textAnswer
+    user_answer = models.CharField(max_length=100, blank=True, verbose_name="")
     is_correct  = models.BooleanField(default=False)
-    current_score = models.IntegerField(default=0) # doubtfull as per Rahul 
+    current_score = models.IntegerField(default=0) 
 
     def get_unanswered_question(self, user_id,quiz):
         answered_list = UserAnswer.objects.filter(user = user_id).values_list('question')
