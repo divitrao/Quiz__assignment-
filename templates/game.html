@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Log In{% endblock title %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block css %}
+
+<link href="{% static 'styles/game.css' %}">
+
+{% endblock css %}
+{% block content %}
+
+<div id="time__div" class="bg-primary text-center">
+
+    <div class="d-flex flex-row justify-content-center">
+
+        <div class="mr-5">
+            <h2>TIME LEFT</h2>
+        </div>
+
+        <div id="time">
+            <h2 id="countdown"></h2>
+        </div>
+    </div>
+</div>
+
+<div class="">
+    <div class="d-flex flex-column flex-wrap justify-content-center" id="display_quiz">
+
+
+    </div>
+
+
+   
+</div>
+
+<br><br><br><br><br><br>
+<div id="submissions" class="d-flex flex-row justify-content-center ">
+    <div class="px-3">
+
+    
+    <a class="btn btn-info" id='submit'>
+        Submit
+    </a>
+</div>
+<div>
+    <button class="btn btn-secondary" id="clear">clear selections</button>
+</div>
+    
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+    const extra_data = JSON.parse(("{{extra_data|escapejs}}"))
+</script>
+<script src="{% static '/javascripts/game.js'%}" type="text/javascript"></script>
+{% endblock javascripts %}
