@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Log In{% endblock title %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <h3>Logged out Successfully</h3>
+   <div>
+       <h4>
+           Want to Login Again ? <a class="link" href="{% url 'two_factor:login' %}">Login</a>
+        </a> or Go to <a class="link" href="{% url 'UserApp:home' %}">HOME</a>
+       </h4>
+   </div>
+</div>
+{% endblock content %}
+
+
