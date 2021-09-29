@@ -35,42 +35,50 @@ $.ajax({
         }
         
         let marks 
+
+        let elem_table = document.createElement('table')
+        elem_table.className = 'table'
+        elem_table.innerHTML = `<thead>
+                                    <tr>
+                                        <th scope='col'> Question </th>
+                                        <th scope='col'> Your Answer </th>
+                                        <th scope='col'> Correct Answer </th>
+                                        <th scope='col'> Status </th>
+                                    </tr>
+                                </thead> `
+        let elem_table_body = document.createElement('tbody')
+        elem_table.appendChild(elem_table_body)
+
         
         for(i=0;i<data.length;i++){
             let user_answer = data[i]['user_answer'].trim().toLowerCase()
             let correct_answer = data[i]['correct_answer'].trim().toLowerCase()
-            
-            let main_div = document.createElement('div')
-            main_div.id = 'main_div'
-            main_div.className = 'd-flex flex-column justify-content-center mb-2 mr-5 ml-5'
-
-            let question_div = document.createElement('div')
-            question_div.innerHTML = `<h2>${data[i]['question_text']}</h2>`
-            question_div.className = 'mb-1 mt-1 p-2 text-center'
-            main_div.appendChild(question_div)
-
-            let user_answer_div = document.createElement('div')
-            user_answer_div.innerHTML = `<h3>Your Answer :   ${data[i]['user_answer']}</h3>`
-            user_answer_div.className = 'text-center'
-            main_div.appendChild(user_answer_div)
-
-            let correct_answer_div = document.createElement('div')
-            correct_answer_div.innerHTML =  `<h3>Correct Answer : ' ${data[i]['correct_answer']}</h3>`
-            correct_answer_div.className = 'text-center'
-            main_div.appendChild(correct_answer_div)
-
-            
-
+            let row_color
+            let result_status
             if(user_answer == correct_answer){
                 marks = 5
-                main_div.style.backgroundColor = "#91f57a"
+                row_color = 'table-success'
+                result_status = 'Correct'
+                
             }
             else{
                 marks = 0
-                main_div.style.backgroundColor = "#f5655b"
+                row_color = 'table-danger'
+                result_status = 'Wrong'
+                
             }
 
-                div_tag.appendChild(main_div)
+            let table_row = document.createElement('tr')
+            table_row.className = `${row_color}`
+
+            table_row.innerHTML = `<th> ${data[i]['question_text']} </th>
+                                    <td> ${data[i]['user_answer']} </td>
+                                    <td> ${data[i]['correct_answer']} </td>
+                                    <td> ${result_status} </td>`
+
+            elem_table_body.appendChild(table_row)
+
+                div_tag.appendChild(elem_table)
                 
         }
 

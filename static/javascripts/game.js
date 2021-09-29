@@ -104,29 +104,48 @@ $.ajax({
 
                 // looping over the options of the related question if it is MCQ 
                 if (data[question_number]['type'] == 'mcq'){
+
+                    let parent_div = document.createElement('div')
+                        parent_div.id = `dic`
+                        parent_div.className = 'form-group'
+                        parent_div.setAttribute('style','height:70px; text-align:center ; font-size:20px; margin-top:2%; padding:10px;  align-items: center;margin-right:10%; margin-left:40%')
+
+                        let div_radio_list = document.createElement('div')
+                        div_radio_list.className = 'radio-list'
+                        div_radio_list.id = 'kkk'
             
                     for(let i=0 ; i< data[question_number]['answers'].length ; i++){
+
+                        let label_tag = document.createElement('label')
+                        label_tag.className = 'radio'
+                        label_tag.id =  `option_${i}`
+                        label_tag.innerHTML =  `<input id= options_${i} type="radio" name="radios1" value=${data[question_number]['answers'][i]['id']}>
+                                                <span></span>
+                                                 ${data[question_number]['answers'][i]['options']}`
+                        // label_tag.className = 'radioa'
+                        // label_tag.id = `option_${i}`
+                        // let input_tag = document.createElement('input')
+                        // input_tag.type = 'radio'
+                        // input_tag.name = 'radios1'
+                        // input_tag.className = 'd'
+                        // input_tag.value = data[question_number]['answers'][i]['id']
+                        // let span_tag = document.createElement('span')
+                        // label_tag.appendChild(span_tag) 
+                        // label_tag.appendChild(input_tag)
                         
-                        let parent_div = document.createElement('div')
-                        parent_div.id = `option_${i}`
-                        parent_div.setAttribute('style','height:70px; text-align:center ; font-size:20px; margin-top:2%; padding:10px; border: 1px solid black; align-items: center;margin-right:10%; margin-left:10%')
+                        div_radio_list.appendChild(label_tag)
+                        // parent_div.appendChild(div_radio_list)
+                        // appending options div to main div tag
+                        // div_tag.appendChild(parent_div)
 
-
-                        let option_div_tag = document.createElement('div')
-                        option_div_tag.id = data[question_number]['answers'][i]['id']
-                        option_div_tag.innerHTML = data[question_number]['answers'][i]['options']
-
-                        parent_div.addEventListener('click', ()=>{
-                            let this_id = parent_div.id
+                        label_tag.addEventListener('click', ()=>{
+                            let this_id = label_tag.id
                             get_id(this_id)
                         
                         })
-                        parent_div.appendChild(option_div_tag)
-                        
-
-                        // appending options div to main div tag
-                        div_tag.appendChild(parent_div)
                     }
+                    parent_div.appendChild(div_radio_list)
+                    div_tag.appendChild(parent_div)
             
                 }
 
@@ -284,35 +303,35 @@ $.ajax({
                 selected_option = []
 
                 let child_id= document.getElementById(elem_id).children
-                selected_option.push(child_id[0].id)
-                change_background_color(elem_id)
+                selected_option.push(child_id[0].value)
+                // change_background_color(elem_id)
+                
                 console.log(selected_option)
             }
 
     /*********************************************  changing background color once user changes option *********************************************************/        
 
-            function change_background_color(elem_id){                             // change background color of div function
-                console.log(elem_id,)
-                for(let i=0 ; i<data[question_number]['answers'].length; i++){
-                    if(elem_id == `option_${i}`){
-                        $(`#${elem_id}`).css("background-color",'rgba(255,204,0)')
-                    }
-                    else{
-                        $(`#option_${i}`).css("background-color",'white')
-                    }
-                }
-            }
+            // function change_background_color(elem_id){                             // change background color of div function
+            //     console.log(elem_id,)
+            //     for(let i=0 ; i<data[question_number]['answers'].length; i++){
+            //         if(elem_id == `option_${i}`){
+            //             $(`#${elem_id}`).css("background-color",'rgba(255,204,0)')
+            //         }
+            //         else{
+            //             $(`#option_${i}`).css("background-color",'white')
+            //         }
+            //     }
+            // }
 
     /*********************************************  clearing option if user wants to unselect options  *********************************************************/
 
             $('#clear').click(function(){                                        // clear selected options function
 
-                for(let i=0 ; i<data[question_number]['answers'].length; i++){
-                    
-                        selected_option = []
-                        $(`#option_${i}`).css("background-color",'white')
-                    
-                }
+
+                document.getElementById("options_0").checked=false
+                document.getElementById("options_1").checked=false
+                document.getElementById("options_2").checked=false
+                selected_option = []
 
             })
 
