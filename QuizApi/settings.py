@@ -46,8 +46,8 @@ INSTALLED_APPS = [
 
     #3rd party apps
     'rest_framework',
-    'corsheaders',
     'crispy_forms',
+    "corsheaders",
 
     #local app
     'UserApp.apps.UserappConfig',
@@ -61,8 +61,11 @@ AUTH_USER_MODEL = 'UserApp.CustomUser'
 
 REST_FRAMEWORK = {
 'DEFAULT_PERMISSION_CLASSES': [
-'rest_framework.permissions.IsAuthenticated', #AllowAny
-]
+'rest_framework.permissions.AllowAny', #AllowAny
+],
+'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
 }
 
 
@@ -160,3 +163,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
