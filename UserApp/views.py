@@ -12,7 +12,7 @@ from .serializers import UserSerializer
 from django.contrib.auth.models import auth
 from rest_framework.exceptions import AuthenticationFailed
 import jwt, datetime
-from django.utils.decorators import method_decorator
+
 
 
 class HomePageView(TemplateView):
@@ -30,7 +30,7 @@ class SignUpView(APIView):
 
 # @method_decorator(csrf_exempt)
 class LoginView(APIView):
-    @csrf_exempt
+
     def post(self,request):
         username = request.data['username']
         password = request.data['password']
@@ -40,6 +40,7 @@ class LoginView(APIView):
         if user is None:
             raise AuthenticationFailed('user not found')
         else:
+            print( auth.login(request,user),'xxxxxxx')
             auth.login(request,user)
 
         payload = {
@@ -63,8 +64,11 @@ class LogoutView(APIView):
     def post(self,request):
         response = Response()
         response.delete_cookie('jwt')
+        auth.logout(request)
         response.data = {
             'message': 'loggged out succesfully'
         }
 
         return response
+class MyLogin(TemplateView):
+    template_name='my_login.html'
